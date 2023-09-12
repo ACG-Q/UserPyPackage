@@ -1,4 +1,4 @@
-name: Pyinstaller UnpkgDownload
+name: Pyinstaller Package
 
 on:
   workflow_dispatch:
@@ -24,12 +24,12 @@ jobs:
         with:
           python-version: 3.7
           architecture: ${{ matrix.platform }}
-      
+
       - name: 安装Python依赖包
         run: |
           python -m pip install --upgrade pip
           python -m pip install pyinstaller
-          python -m pip install -r requirements.tx
+          python -m pip install -r requirements.txt
 
       - name: 打包(只能是main.py)
         run: |
