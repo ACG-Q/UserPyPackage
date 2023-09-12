@@ -1,0 +1,7 @@
+Pillow==10.0.0
+PyAutoGUI==0.9.54
+pyautostart==0.1.2
+PyGetWindow==0.0.9
+pyperclip==1.8.2
+pystray==0.19.4
+requests==2.31.0

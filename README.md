@@ -1,15 +1,11 @@
-# UserPyPackage
-自用Python打包仓库
+# activation_codes_filecxx
 
 ## 介绍
 
-保持一个干净的Python打包环境
+参考 [Uber-Eins/FileCentipede-Automatic-Activation: 一个简单的文件蜈蚣(半)自动激活程序](https://github.com/Uber-Eins/FileCentipede-Automatic-Activation) 完成的GUI版自动激活工具
 
-> 当前分支只是作为模板
+## 功能
 
-## 用法
-
-1. 修改主程序为main.py
-2. 添加可执行文件图标favicon.ico
-3. 添加requirements.txt
-4. 上传代码，不要放到二级目录中，放在根目录即可
+1. 开机自启
+2. 循环检测
+3. 集成FileCentipede-Automatic-Activation的自动激活
