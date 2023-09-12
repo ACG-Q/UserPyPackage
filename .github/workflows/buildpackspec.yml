@@ -33,7 +33,7 @@ jobs:
 
       - name: 打包
         run: |
-            pyinstaller File Centipede Automatic Activation.spec
+            pyinstaller "File Centipede Automatic Activation.spec"
 
       - name: Upload Package
         uses: actions/upload-artifact@v3
