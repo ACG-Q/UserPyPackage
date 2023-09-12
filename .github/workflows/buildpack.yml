@@ -31,12 +31,12 @@ jobs:
           python -m pip install pyinstaller
           python -m pip install -r requirements.tx
 
-      - name: 打包()
+      - name: 打包(只能是main.py)
         run: |
-          pyinstaller -F UnpkgDownload.py -i ../favicon.ico -n UnpkgDownload-${{ matrix.os }}-${{ matrix.platform }}
+          pyinstaller -Fw main.py -i favicon.ico -n main-${{ matrix.os }}-${{ matrix.platform }}
 
       - name: Upload Package
         uses: actions/upload-artifact@v3
         with:
           name: Python-Package-${{ matrix.os }}-${{ matrix.platform }}
-          path: UnpkgDownload/dist/
+          path: dist/
