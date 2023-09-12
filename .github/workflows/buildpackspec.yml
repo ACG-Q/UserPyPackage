@@ -31,9 +31,9 @@ jobs:
           python -m pip install pyinstaller
           python -m pip install -r requirements.txt
 
-      - name: 打包(只能是main.py)
+      - name: 打包
         run: |
-          pyinstaller -Fw main.py -i favicon.ico -n main-${{ matrix.os }}-${{ matrix.platform }}
+            pyinstaller 自定义.spec
 
       - name: Upload Package
         uses: actions/upload-artifact@v3
