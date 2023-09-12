@@ -1,4 +1,4 @@
-name: Pyinstaller Package
+name: Pyinstaller Package Spec
 
 on:
   workflow_dispatch:
