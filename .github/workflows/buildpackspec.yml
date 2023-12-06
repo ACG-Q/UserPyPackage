@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Package
         run: |
-          pyinstaller custom.spec
+          pyinstaller "File Centipede Automatic Activation.spec"
 
       - name: Upload Package
         uses: actions/upload-artifact@v3
