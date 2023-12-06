@@ -16,7 +16,7 @@ program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
 if getattr(sys, 'frozen', False):
     # 脚本已被打包
     executable_path = sys.executable
-    executable_dir = os.path.dirname(os.path.abspath(sys._MEIPASS))
+    executable_dir = sys._MEIPASS
 else:
     # 脚本未被打包
     executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
