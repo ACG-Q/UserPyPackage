@@ -4,18 +4,48 @@ import tkinter.messagebox as messagebox
 import threading
 import os
 import time
+import sys
 import pystray
 from pyautostart import SmartAutostart
 from PIL import Image
 
-from activation_codes import get_activation_codes, input_activation_code
+from utils import update_code_list_by_local, get_code_in_code_list, input_activation_code
 
 program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
-executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
-# 获取可执行文件的根目录
-executable_path = sys._MEIPASS
-window_icon = os.path.join(executable_path, "favicon.ico")
-tray_icon = os.path.join(executable_path, "icon.png")
+
+if getattr(sys, 'frozen', False):
+    # 脚本已被打包
+    executable_path = sys.executable
+    executable_dir = os.path.dirname(os.path.abspath(sys._MEIPASS))
+else:
+    # 脚本未被打包
+    executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
+    executable_dir = os.path.dirname(os.path.abspath(executable_path))
+
+window_icon = os.path.join(executable_dir, "favicon.ico")
+tray_icon = os.path.join(executable_dir, "icon.png")
+
+def close_message_box(message_box, callback):
+    message_box.destroy()
+    if callback: callback()
+
+def show_auto_close_message(title, message, duration, callback):
+    root = tk.Tk()
+    root.withdraw()  # 隐藏主窗口
+
+    message_box = tk.Toplevel(root)
+    message_box.title(title)
+    message_label = tk.Label(message_box, text=message)
+    message_label.pack(padx=20, pady=20)
+
+    root.after(duration, lambda: close_message_box(message_box, callback))
+    root.mainloop()
+
+    
+
+class UpdateCode(threading.Thread):
+    def run(self):
+        update_code_list_by_local(executable_dir)
 
 class ActivationCodeApp:
     def __init__(self, root):
@@ -70,18 +100,17 @@ class ActivationCodeApp:
 
     def create_run(self):
         while True:
-            activation_codes = get_activation_codes()
+            activation_codes = get_code_in_code_list(executable_dir)
+            print("-->", activation_codes)
             if activation_codes:
-                print(activation_codes)
                 isOk = input_activation_code("文件蜈蚣 - 激活码", activation_codes)
                 if isOk:
                     break
                 time.sleep(2)
             else:
+                UpdateCode().start()
                 time.sleep(60)
-        messagebox.showinfo("提示", "激活码已输入，点击确定后3秒后自动关闭")
-        time.sleep(3)
-        self.exit_app()
+        show_auto_close_message("提示", "激活码已输入，点击确定后3秒后自动关闭", 3000, self.exit_app)
 
     def show_tray_icon(self):
         image = Image.open(tray_icon)  # Replace with the path to your icon image
@@ -115,12 +144,13 @@ class ActivationCodeApp:
     def show_main_window(self):
         self.root.deiconify()
 
-
-
 def main():
+    UpdateCode().start()
     root = tk.Tk()
     # 隐藏窗口
     root.withdraw()
+    # 关闭按钮改为回到托盘（隐藏窗口）
+    root.protocol("WM_DELETE_WINDOW", lambda: root.withdraw())
     app = ActivationCodeApp(root)
     root.mainloop()
 
