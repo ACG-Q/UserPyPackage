@@ -11,8 +11,9 @@ jobs:
           - { platform: x64, os: ubuntu-latest }
           - { platform: x64, os: windows-latest }
           - { platform: x86, os: windows-latest }
+          - { platform: x64, os: macos-latest }
 
-    name: main-${{ matrix.platform }}
+    name: main-${{ matrix.platform }}-${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:
