@@ -128,7 +128,7 @@ class ActivationCodeApp:
     def set_startup_program(self):
         options = {
             "args": [
-                executable_path
+                f"\"{executable_path}\""
             ]
         }
         self.autostart.enable(name=program_name, options=options)
