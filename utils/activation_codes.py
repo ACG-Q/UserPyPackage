@@ -47,6 +47,7 @@ def merge_list(list1, list2):
 def update_code_list_by_local(dir:str):
     global get_code_retry_times
     try:
+        print("开始更新激活码列表")
         path = os.path.join(dir, code_list_file_name)
         # 发送GET请求并获取网页内容
         url = "https://filecxx.com/zh_CN/activation_code.html"
@@ -86,6 +87,7 @@ def update_code_list_by_local(dir:str):
         # 保存为JSON文件
         with open(path, "w") as f:
             json.dump(result, f, indent=4)
+        print("激活码列表已更新")
     except KeyboardInterrupt:
         print("Ctrl+C detected. Exiting...")
         return

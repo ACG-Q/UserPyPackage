@@ -16,14 +16,17 @@ program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
 if getattr(sys, 'frozen', False):
     # 脚本已被打包
     executable_path = sys.executable
-    executable_dir = sys._MEIPASS
+    # sys._MEIPASS 就是这些依赖文件所在文件夹的路径
+    dependent_dir = sys._MEIPASS
 else:
     # 脚本未被打包
     executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
-    executable_dir = os.path.dirname(os.path.abspath(executable_path))
+    dependent_dir = os.path.dirname(os.path.abspath(executable_path))
 
-window_icon = os.path.join(executable_dir, "favicon.ico")
-tray_icon = os.path.join(executable_dir, "icon.png")
+executable_dir = os.path.dirname(os.path.abspath(executable_path))
+
+window_icon = os.path.join(dependent_dir, "favicon.ico")
+tray_icon = os.path.join(dependent_dir, "icon.png")
 
 def close_message_box(message_box, callback):
     message_box.destroy()
@@ -101,13 +104,14 @@ class ActivationCodeApp:
     def create_run(self):
         while True:
             activation_codes = get_code_in_code_list(executable_dir)
-            print("-->", activation_codes)
+            print("获取激活码", activation_codes)
             if activation_codes:
                 isOk = input_activation_code("文件蜈蚣 - 激活码", activation_codes)
                 if isOk:
                     break
                 time.sleep(2)
             else:
+                print("未获取到激活码, 更新激活码列表")
                 UpdateCode().start()
                 time.sleep(60)
         show_auto_close_message("提示", "激活码已输入，点击确定后3秒后自动关闭", 3000, self.exit_app)
