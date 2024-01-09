@@ -149,7 +149,7 @@ class ActivationCodeApp:
         self.root.deiconify()
 
 def main():
-    UpdateCode().start()
+    UpdateCode().run()
     root = tk.Tk()
     # 隐藏窗口
     root.withdraw()
