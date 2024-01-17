@@ -23,6 +23,13 @@ code_list_file_name = "code_list.json"
 #     "code": ""
 # }]
 def merge_list(list1, list2):
+    # 判断list1是不是数组
+    if not isinstance(list1, list):
+        list1 = []
+    
+    if not isinstance(list2, list):
+        list2 = []
+
     for item2 in list2:
         start2 = item2["start"]
         end2 = item2["end"]
@@ -41,6 +48,7 @@ def merge_list(list1, list2):
         list1.append(item2)
     
     return list1
+
 
 
 
