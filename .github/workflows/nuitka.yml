@@ -46,9 +46,8 @@ jobs:
           python install_upx.py
 
       - name: Build the application
-        run: |
-          python build_nuitka.py
-  
+        run: echo "Yes" | python build_nuitka.py
+
       - name: Upload the build artifacts
         uses: actions/upload-artifact@v4
         with:
