@@ -13,7 +13,7 @@ def merge_list(list1, list2):
     # 判断list1是不是数组
     if not isinstance(list1, list):
         list1 = []
-    
+
     if not isinstance(list2, list):
         list2 = []
 
@@ -136,10 +136,5 @@ def get_code_in_code_list(dir):
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     update_code_list_by_local_force(".")
     print(get_code_in_code_list("."))
-=======
-    update_code_list_by_local(".")
-    print(get_code_in_code_list("."))
->>>>>>> d87aebb7bd716771c5eea1fd37045e8e16ba5644
