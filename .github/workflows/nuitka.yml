@@ -6,17 +6,17 @@ on:
 jobs:
   build-and-upload:
     strategy:
-    matrix:
-      include:
-        - { platform: x64, os: windows-latest }
-        - { platform: x86, os: windows-latest }
-        - { platform: x64, os: ubuntu-latest }
-        - { platform: arm, os: ubuntu-latest }
-        - { platform: arm64, os: ubuntu-latest }
-        - { platform: armeb, os: ubuntu-latest }
-        - { platform: mips64el, os: ubuntu-latest }
-        - { platform: mipsel, os: ubuntu-latest }
-        - { platform: mips, os: ubuntu-latest }
+      matrix:
+        include:
+          - { platform: x64, os: windows-latest }
+          - { platform: x86, os: windows-latest }
+          - { platform: x64, os: ubuntu-latest }
+          - { platform: arm, os: ubuntu-latest }
+          - { platform: arm64, os: ubuntu-latest }
+          - { platform: armeb, os: ubuntu-latest }
+          - { platform: mips64el, os: ubuntu-latest }
+          - { platform: mipsel, os: ubuntu-latest }
+          - { platform: mips, os: ubuntu-latest }
 
 
     name: Build and Upload ${{ matrix.platform }} ${{ matrix.os }}
