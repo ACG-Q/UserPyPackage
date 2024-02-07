@@ -44,7 +44,11 @@ def main():
     nuitka_args.append("main.py")
 
     # Run Nuitka
-    subprocess.check_call(nuitka_args)
+    # subprocess.check_call(nuitka_args)
+    # 创建子进程并执行命令
+    process = subprocess.Popen(nuitka_args, stdin=subprocess.PIPE, shell=True)
+    # 向子进程发送输入 "Yes"
+    process.communicate(input=b"Yes\n")
 
 if __name__ == "__main__":
     main()
