@@ -9,20 +9,13 @@ get_code_retry_times = 3
 code_list_file_name = "code_list.json"
 
 
-# 列表合并
-# list1
-# [{
-#     "start": 123123,
-#     "end": 123123,
-#     "code": ""
-# }]
-# list2
-# [{
-#     "start": 123123,
-#     "end": 123123,
-#     "code": ""
-# }]
 def merge_list(list1, list2):
+    if not isinstance(list1, list):
+        list1 = []
+    
+    if not isinstance(list2, list):
+        list2 = []
+
     for item2 in list2:
         start2 = item2["start"]
         end2 = item2["end"]
@@ -37,54 +30,73 @@ def merge_list(list1, list2):
                 found = True
                 break
 
-    if not found:
-        list1.append(item2)
+        if not found:
+            list1.append(item2)
     
     return list1
 
+def get_code_list_from_remote():
+    result = []
 
+    url = "https://filecxx.com/zh_CN/activation_code.html"
+    response = requests.get(url)
+    html_content = response.text
 
-def update_code_list_by_local(dir:str):
+    soup = BeautifulSoup(html_content, "html.parser")
+    codes_element = soup.find(id="codes")
+    codes_text = codes_element.get_text(strip=True)
+
+    codes_list = codes_text.split("\n\n")
+    
+
+    for i in range(len(codes_list)):
+        codes = codes_list[i].split("\n")
+        start_end = codes[0]
+        code = codes[1]
+
+        start, end = start_end.split(" - ")
+
+        data = {
+            "start": start,
+            "end": end,
+            "code": code
+        }
+        result.append(data)
+
+    return result
+
+def update_code_list_by_local_force(dir):
     global get_code_retry_times
     try:
-        print("开始更新激活码列表")
+        result = get_code_list_from_remote()
         path = os.path.join(dir, code_list_file_name)
-        # 发送GET请求并获取网页内容
-        url = "https://filecxx.com/zh_CN/activation_code.html"
-        response = requests.get(url)
-        html_content = response.text
 
-        # 使用BeautifulSoup解析网页内容
-        soup = BeautifulSoup(html_content, "html.parser")
+        with open(path, "w") as f:
+            json.dump(result, f, indent=4)
+        print("激活码列表已强制更新")
+    except KeyboardInterrupt:
+        print("Ctrl+C detected. Exiting...")
+        return
+    except BaseException as e:
+        print("强制更新激活码列表失败，正在重试", e)
+        if get_code_retry_times > 0:
+            get_code_retry_times -= 1
+            update_code_list_by_local_force(dir)
+        else:
+            print("强制更新激活码列表失败")
+            get_code_retry_times = 3
 
-        # 获取id为codes的内容
-        codes_element = soup.find(id="codes")
-        codes_text = codes_element.get_text(strip=True)
-
-        # 解析codes内容并保存为JSON
-        codes_list = codes_text.split("\n\n")
-        result = []
-
-        for i in range(len(codes_list)):
-            codes = codes_list[i].split("\n")
-            start_end = codes[0]
-            code = codes[1]
-
-            start, end = start_end.split(" - ")
-
-            data = {
-                "start": start,
-                "end": end,
-                "code": code
-            }
-            result.append(data)
+def update_code_list_by_local(dir):
+    global get_code_retry_times
+    try:
+        result = get_code_list_from_remote()
+        path = os.path.join(dir, code_list_file_name)
 
         if os.path.exists(path):
             with open(path, "r") as f:
                 old_result = json.load(f)
             result = merge_list(old_result, result)
 
-        # 保存为JSON文件
         with open(path, "w") as f:
             json.dump(result, f, indent=4)
         print("激活码列表已更新")
@@ -92,35 +104,36 @@ def update_code_list_by_local(dir:str):
         print("Ctrl+C detected. Exiting...")
         return
     except BaseException as e:
-        print("更新激活码列表失败, 正在重试", e)
+        print("更新激活码列表失败，正在重试", e)
         if get_code_retry_times > 0:
-            get_code_retry_times = get_code_retry_times - 1
+            get_code_retry_times -= 1
             update_code_list_by_local(dir)
         else:
             print("更新激活码列表失败")
-
-def get_code_in_code_list(dir:str):
+            get_code_retry_times = 3
+def get_code_in_code_list(dir):
     path = os.path.join(dir, code_list_file_name)
     if os.path.exists(path):
-        # 获取JSON文件内容
         with open(path, "r") as f:
             code_list = json.load(f)
 
-        # 获取当前时间
         now_time = int(datetime.now().timestamp())
+        found = False
 
-        # 获取当前时间在时间列表中的索引
         for i in range(len(code_list)):
             start_unix = int(datetime.strptime(code_list[i]["start"], "%Y-%m-%d %H:%M:%S").timestamp())
             end_unix = int(datetime.strptime(code_list[i]["end"], "%Y-%m-%d %H:%M:%S").timestamp())
             if start_unix <= now_time <= end_unix:
+                found = True
                 return code_list[i]["code"]
                 break
-    
-    return None
 
+        if not found:
+            return None
+    else:
+        return None
 
 
 if __name__ == "__main__":
-    update_code_list_by_local(".")
+    update_code_list_by_local_force(".")
     print(get_code_in_code_list("."))

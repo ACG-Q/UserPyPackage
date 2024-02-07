@@ -6,12 +6,14 @@ import os
 import time
 import sys
 import pystray
+import argparse
 from pyautostart import SmartAutostart
 from PIL import Image
 
-from utils import update_code_list_by_local, get_code_in_code_list, input_activation_code
+from utils import update_code_list_by_local, update_code_list_by_local_force, get_code_in_code_list, input_activation_code
 
 program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
+version = "1.0.0"
 
 if getattr(sys, 'frozen', False):
     # 脚本已被打包
@@ -27,6 +29,8 @@ executable_dir = os.path.dirname(os.path.abspath(executable_path))
 
 window_icon = os.path.join(dependent_dir, "favicon.ico")
 tray_icon = os.path.join(dependent_dir, "icon.png")
+
+autostart = SmartAutostart()
 
 def close_message_box(message_box, callback):
     message_box.destroy()
@@ -49,6 +53,17 @@ def show_auto_close_message(title, message, duration, callback):
 class UpdateCode(threading.Thread):
     def run(self):
         update_code_list_by_local(executable_dir)
+def is_startup_enabled():
+    return autostart.is_enabled(name=program_name)
+def set_startup_program():
+    options = {
+        "args": [
+            f"\"{executable_path}\""
+        ]
+    }
+    autostart.enable(name=program_name, options=options)
+def disable_startup_program():
+    autostart.disable(name=program_name)
 
 class ActivationCodeApp:
     def __init__(self, root):
@@ -68,11 +83,9 @@ class ActivationCodeApp:
 
         self.root.minsize(width, height)
 
-        self.autostart = SmartAutostart()
-
         # 初始化布尔变量，用于开机自启选项的状态
         self.start_on_startup_var = tk.BooleanVar()
-        self.start_on_startup_var.set(self.is_startup_enabled())  # 设置为开机自启的状态
+        self.start_on_startup_var.set(is_startup_enabled())  # 设置为开机自启的状态
 
         self.create_gui()
 
@@ -96,10 +109,10 @@ class ActivationCodeApp:
         # 开机自启选项状态改变时触发
         if self.start_on_startup_var.get():
             # 如果选中了开机自启，启用开机自启动
-            self.set_startup_program()
+            set_startup_program()
         else:
             # 如果取消选中开机自启，禁用开机自启动
-            self.disable_startup_program()
+            disable_startup_program()
 
     def create_run(self):
         while True:
@@ -126,20 +139,6 @@ class ActivationCodeApp:
         self.tray_icon.run()
 
 
-    def is_startup_enabled(self):
-        return self.autostart.is_enabled(name=program_name)
-
-    def set_startup_program(self):
-        options = {
-            "args": [
-                f"\"{executable_path}\""
-            ]
-        }
-        self.autostart.enable(name=program_name, options=options)
-
-    def disable_startup_program(self):
-        self.autostart.disable(name=program_name)
-
     def exit_app(self):
         self.root.quit()
         self.root.destroy()
@@ -148,7 +147,54 @@ class ActivationCodeApp:
     def show_main_window(self):
         self.root.deiconify()
 
+# 命令行参数解析
+def parse_args():
+    parser = argparse.ArgumentParser(description="文件蜈蚣自动激活器", epilog="直接运行程序以显示用户界面")
+
+    command_group = parser.add_argument_group("命令行参数")
+    command_group.add_argument("-s", "--startup", action="store_true", help="开机自启")
+    command_group.add_argument("-c", "--code", action="store_true", help="获取激活码")
+    command_group.add_argument("-v", "--version", action="store_true", help="版本号")
+
+    update_group = parser.add_argument_group("更新参数")
+    update_group.add_argument("-u", "--update", action="store_true", help="更新激活码列表")
+    update_group.add_argument("-f", "--force", action="store_true", help="强制更新激活码列表")
+
+    args = parser.parse_args()
+
+    if args.force and not args.update:
+        parser.error("'-f' 选项只能与 '-u' 选项一起使用")
+        exit(0)
+
+    if args.update:
+        if args.force:
+            # 强制更新激活码列表
+            update_code_list_by_local_force(executable_dir)
+        else:
+            # 更新激活码列表
+            update_code_list_by_local(executable_dir)
+        exit(0)
+    
+    if args.startup:
+        if is_startup_enabled():
+            disable_startup_program()
+            print("开机自启已禁用")
+        else:
+            set_startup_program()
+            print("开机自启已启用")
+        exit(0)
+    
+    if args.code:
+        activation_codes = get_code_in_code_list(executable_dir)
+        print(f"激活码: {activation_codes}")
+        exit(0)
+    
+    if args.version:
+        print("版本号", version)
+        exit(0)
+
 def main():
+    parse_args()
     UpdateCode().start()
     root = tk.Tk()
     # 隐藏窗口
