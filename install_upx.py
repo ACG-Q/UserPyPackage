@@ -54,7 +54,15 @@ def extract_upx(input_file, output_dir, zip_name_dir):
 
     if os.path.exists(os.path.join(output_dir, zip_name_dir)):
         # Move the contents of output_dir/zip_name_dir to output_dir
-        shutil.move(os.path.join(output_dir, zip_name_dir), output_dir)
+        # shutil.move(os.path.join(output_dir, zip_name_dir), output_dir)
+        # 遍历源目录下的所有文件和子目录
+        for item in os.listdir(os.path.join(output_dir, zip_name_dir)):
+            # 构建源文件或目录的完整路径
+            source_path = os.path.join(output_dir, zip_name_dir, item)
+            # 构建目标文件或目录的完整路径
+            target_path = os.path.join(output_dir, item)
+            # 移动文件或目录
+            shutil.move(source_path, target_path)
 
     if sys.platform == "linux" or sys.platform == "darwin":
         print("setting executable permissions...")
