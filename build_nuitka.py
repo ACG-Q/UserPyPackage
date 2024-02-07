@@ -24,13 +24,13 @@ def main():
         "--include-data-file=./favicon.ico=./favicon.ico", # 包含图标
         "--onefile", # 单个exe文件
         "--remove-output", # 清理打包过程中生成的临时文件
-        "--include-module=pystray",
-        "--include-module=PyAutoGUI",
-        "--include-module=pyautostart",
-        "--include-module=PyGetWindow",
-        "--include-module=pyperclip",
-        "--include-module=requests",
-        "--include-module=beautifulsoup4",
+        # "--include-module=pystray",
+        # "--include-module=PyAutoGUI",
+        # "--include-module=pyautostart",
+        # "--include-module=PyGetWindow",
+        # "--include-module=pyperclip",
+        # "--include-module=requests",
+        # "--include-module=beautifulsoup4",
     ]
 
     # Add platform-specific arguments
