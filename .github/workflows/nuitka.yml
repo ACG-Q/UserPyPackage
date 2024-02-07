@@ -44,6 +44,8 @@ jobs:
       - name: Download UPX
         run: |
           python install_upx.py
+          cd upx
+          dir
 
       - name: Build the application
         run: |
