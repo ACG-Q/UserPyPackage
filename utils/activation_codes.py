@@ -33,7 +33,6 @@ def merge_list(list1, list2):
 
         if not found:
             list1.append(item2)
-    
     return list1
 
 def get_code_list_from_remote():
@@ -48,7 +47,6 @@ def get_code_list_from_remote():
     codes_text = codes_element.get_text(strip=True)
 
     codes_list = codes_text.split("\n\n")
-    
 
     for i in range(len(codes_list)):
         codes = codes_list[i].split("\n")

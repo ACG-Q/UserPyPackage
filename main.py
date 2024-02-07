@@ -7,6 +7,7 @@ import time
 import sys
 import pystray
 import argparse
+import ctypes
 from pyautostart import SmartAutostart
 from PIL import Image
 
@@ -14,6 +15,14 @@ from utils import update_code_list_by_local, update_code_list_by_local_force, ge
 
 program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
 version = "1.0.0"
+
+# 设置为中文
+if system_type == "darwin":
+    os.system("export LC_ALL=zh_CN.UTF-8 && clear")
+elif system_type == "linux":
+    os.system("locale.setlocale(locale.LC_ALL, 'zh_CN.UTF-8') && clear")
+else:
+    os.system("chcp 65001 && cls")
 
 if getattr(sys, 'frozen', False):
     # 脚本已被打包
@@ -191,8 +200,19 @@ def parse_args():
         print("版本号", version)
         sys.exit(0)
 
+
+
+def close_console():
+    # Get the current console window handle
+    hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+
+    # Close the console window
+    ctypes.windll.user32.PostMessageW(hwnd, 0x0010, 0, 0)
+
+
 def main():
     parse_args()
+    close_console()
     UpdateCode().start()
     root = tk.Tk()
     # 隐藏窗口
