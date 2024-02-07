@@ -48,8 +48,6 @@ def show_auto_close_message(title, message, duration, callback):
     root.after(duration, lambda: close_message_box(message_box, callback))
     root.mainloop()
 
-    
-
 class UpdateCode(threading.Thread):
     def run(self):
         update_code_list_by_local(executable_dir)
@@ -164,7 +162,7 @@ def parse_args():
 
     if args.force and not args.update:
         parser.error("'-f' 选项只能与 '-u' 选项一起使用")
-        exit(0)
+        sys.exit(0)
 
     if args.update:
         if args.force:
@@ -173,8 +171,8 @@ def parse_args():
         else:
             # 更新激活码列表
             update_code_list_by_local(executable_dir)
-        exit(0)
-    
+        sys.exit(0)
+
     if args.startup:
         if is_startup_enabled():
             disable_startup_program()
@@ -182,16 +180,16 @@ def parse_args():
         else:
             set_startup_program()
             print("开机自启已启用")
-        exit(0)
-    
+        sys.exit(0)
+
     if args.code:
         activation_codes = get_code_in_code_list(executable_dir)
         print(f"激活码: {activation_codes}")
-        exit(0)
-    
+        sys.exit(0)
+
     if args.version:
         print("版本号", version)
-        exit(0)
+        sys.exit(0)
 
 def main():
     parse_args()
