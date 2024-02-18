@@ -9,6 +9,9 @@ def main():
     # Determine the system type
     system_type = sys.platform
 
+    # 获取输出程序名称
+    output_name = sys.argv[1]
+
     # Set the Nuitka command-line arguments
     nuitka_args = [
         "python",
@@ -19,18 +22,19 @@ def main():
         "--show-progress", # 显示编译的进度，很直观
         "--show-memory", # 显示内存占用，很直观
         "--output-dir=dist", # 输出目录
+        f"--output-name={output_name}", # 输出名称
         "--plugin-enable=tk-inter", # 使tkinter可用
         "--include-data-file=./icon.png=./icon.png", # 包含图标
         "--include-data-file=./favicon.ico=./favicon.ico", # 包含图标
         "--onefile", # 单个exe文件
         "--remove-output", # 清理打包过程中生成的临时文件
-        # "--include-module=pystray",
-        # "--include-module=PyAutoGUI",
-        # "--include-module=pyautostart",
-        # "--include-module=PyGetWindow",
-        # "--include-module=pyperclip",
-        # "--include-module=requests",
-        # "--include-module=beautifulsoup4",
+        "--include-module=pystray",
+        "--include-module=PyAutoGUI",
+        "--include-module=pyautostart",
+        "--include-module=PyGetWindow",
+        "--include-module=pyperclip",
+        "--include-module=requests",
+        "--include-module=beautifulsoup4",
     ]
 
     # Add platform-specific arguments
