@@ -19,7 +19,7 @@ def main():
         "--show-progress", # 显示编译的进度，很直观
         "--show-memory", # 显示内存占用，很直观
         "--output-dir=dist", # 输出目录
-        "--output-name='File Centipede Automatic Activation'", # 输出名称
+        "--output-filename='File Centipede Automatic Activation'", # 输出名称
         "--plugin-enable=tk-inter", # 使tkinter可用
         "--include-data-file=./icon.png=./icon.png", # 包含图标
         "--include-data-file=./favicon.ico=./favicon.ico", # 包含图标
