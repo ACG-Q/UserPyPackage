@@ -50,7 +50,7 @@ jobs:
           python install_ssl.py
 
       - name: Build the application
-        run: echo "Yes" | python build_nuitka.py "File Centipede Automatic Activation"
+        run: echo "Yes" | python build_nuitka.py
 
       - name: Upload the build artifacts
         uses: actions/upload-artifact@v4
