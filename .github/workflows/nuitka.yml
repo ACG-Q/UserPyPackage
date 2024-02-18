@@ -45,11 +45,15 @@ jobs:
         run: |
           python install_upx.py
 
+      - name: Upgrade SSL
+        run: |
+          python install_ssl.py
+
       - name: Build the application
-        run: echo "Yes" | python build_nuitka.py
+        run: echo "Yes" | python build_nuitka.py "File Centipede Automatic Activation"
 
       - name: Upload the build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts
+          name: ${{ matrix.platform }}-${{ matrix.os }}
           path: dist
