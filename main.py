@@ -8,6 +8,7 @@ import sys
 import pystray
 import argparse
 import ctypes
+import platform
 from pyautostart import SmartAutostart
 from PIL import Image
 
@@ -16,6 +17,7 @@ from utils import update_code_list_by_local, update_code_list_by_local_force, ge
 program_name = "文件蜈蚣自动激活器"  # 替换为你的程序名称
 version = "1.0.0"
 
+system_type = platform.system()  
 # 设置为中文
 if system_type == "darwin":
     os.system("export LC_ALL=zh_CN.UTF-8 && clear")
