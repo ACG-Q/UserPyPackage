@@ -31,7 +31,7 @@ jobs:
       - name: Set Python version
         uses: actions/setup-python@v3
         with:
-          python-version: '3.7.2'
+          python-version: '3.7'
 
       - name: Install Python dependencies
         run: |
