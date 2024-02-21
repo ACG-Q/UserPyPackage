@@ -9,6 +9,7 @@ import pystray
 import argparse
 import ctypes
 import platform
+# import nuitka.include.datafile as datafile
 from pyautostart import SmartAutostart
 from PIL import Image
 
@@ -26,20 +27,47 @@ elif system_type == "linux":
 else:
     os.system("chcp 65001 && cls")
 
-if getattr(sys, 'frozen', False):
-    # 脚本已被打包
-    executable_path = sys.executable
-    # sys._MEIPASS 就是这些依赖文件所在文件夹的路径
-    dependent_dir = sys._MEIPASS
-else:
-    # 脚本未被打包
-    executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
-    dependent_dir = os.path.dirname(os.path.abspath(executable_path))
 
-executable_dir = os.path.dirname(os.path.abspath(executable_path))
+# Nuitka打包
+# try:
+#     icon_data = datafile.open("favicon.ico")
+#     tray_icon_data = datafile.open("icon.png")
+# except NameError:
+#     # 脚本未被打包
+#     executable_path = os.path.abspath(sys.argv[0])  # 替换为你的可执行文件路径
+#     dependent_dir = os.path.dirname(os.path.abspath(executable_path))
 
-window_icon = os.path.join(dependent_dir, "favicon.ico")
-tray_icon = os.path.join(dependent_dir, "icon.png")
+def resource_path(filename):
+    # Get the absolute path of the directory containing the executable
+    exe_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Construct the path to the image file
+    image_path = os.path.join(exe_dir, filename)
+
+    # Return the image path
+    return image_path
+
+# if getattr(sys, 'frozen', False):
+#     # 脚本已被打包
+#     executable_path = sys.executable
+#     window_icon = resource_path("favicon.ico")
+#     tray_icon = resource_path("icon.png")
+# else:
+#     # 脚本未被打包
+#     executable_path = os.path.abspath(sys.argv[0])
+#     dependent_dir = os.path.dirname(os.path.abspath(executable_path))
+#     window_icon = os.path.join(dependent_dir, "favicon.ico")
+#     tray_icon = os.path.join(dependent_dir, "icon.png")
+
+try:
+    executable_dir = __compiled__.containing_dir
+    window_icon = resource_path("favicon.ico")
+    tray_icon = resource_path("icon.png")
+except NameError:
+    executable_dir = os.path.dirname(os.path.abspath(sys.argv[0]))
+    dependent_dir = executable_dir
+    window_icon = os.path.join(dependent_dir, "favicon.ico")
+    tray_icon = os.path.join(dependent_dir, "icon.png")
 
 autostart = SmartAutostart()
 
@@ -79,7 +107,12 @@ class ActivationCodeApp:
         self.root = root
 
         self.root.title("激活")
-        self.root.iconbitmap(window_icon)
+
+        try:
+            icon_data = datafile.open("favicon.ico")
+            self.root.iconbitmap(default=icon_data)
+        except NameError:
+            self.root.iconbitmap(window_icon)
 
         width = 200
         height = 135
@@ -139,7 +172,11 @@ class ActivationCodeApp:
         show_auto_close_message("提示", "激活码已输入，点击确定后3秒后自动关闭", 3000, self.exit_app)
 
     def show_tray_icon(self):
-        image = Image.open(tray_icon)  # Replace with the path to your icon image
+        try:
+            image = datafile.open("favicon.ico")
+        except NameError:
+            image = Image.open(tray_icon)  # Replace with the path to your icon image
+        
         menu = (
             pystray.MenuItem("显示主页面", self.show_main_window),
             pystray.MenuItem("退出", self.exit_app)
